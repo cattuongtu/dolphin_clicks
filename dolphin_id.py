@@ -7,11 +7,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, InputLayer
 
 
 # our libraries
 from lib.partition import split_by_day
 import lib.file_utilities as util
+from lib.buildmodels import build_model
 
 # Any other modules you create
 
@@ -44,12 +46,18 @@ def dolphin_classifier(data_directory):
     pacific_train, pacific_test = train_test_split(list(all_pacific_records))
 
 
-    # Preparing data and training the model with the data
-    model = Sequential()
+    # Preparing data
     risso_prepared_data = np.vstack(risso_train)
     pacific_prepared_data = np.vstack(pacific_train)
     print(risso_prepared_data)
     print(pacific_prepared_data)
+
+    # Building the model
+    model = Sequential()
+    model.add(InputLayer((25,)))
+    model.add(Dense(10, activation='relu'))
+    model.add(Dense(10, activation='relu'))
+    model.add(Dense(2, activation='softmax'))
 
 
 
