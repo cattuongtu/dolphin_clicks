@@ -30,12 +30,12 @@ def dolphin_classifier(data_directory):
     use_onlyN = np.Inf  # debug, only read this many files for each species
 
     # Get, parse, and split files for Risso(Gg)
-    risso_file_list = util.get_files("./features/features/Gg", stop_after=25)
+    risso_file_list = util.get_files("./features/features/Gg", stop_after=100)
     risso_parsed_files = util.parse_files(risso_file_list)
     risso_files_by_day = split_by_day(risso_parsed_files)
 
     # Get, parse, and split files for Pacific(Lo)
-    pacific_file_list = util.get_files("./features/features/Lo", stop_after=25)
+    pacific_file_list = util.get_files("./features/features/Lo", stop_after=100)
     pacific_parsed_files = util.parse_files(pacific_file_list)
     pacific_files_by_day = split_by_day(pacific_parsed_files)
 
@@ -58,6 +58,13 @@ def dolphin_classifier(data_directory):
     model.add(Dense(10, activation='relu'))
     model.add(Dense(10, activation='relu'))
     model.add(Dense(2, activation='softmax'))
+
+    model.compile(optimizer = "Adam", loss = "categorical_crossentropy", metrics = ["accuracy"])
+
+    model.summary()
+
+    print(type(risso_prepared_data))
+    # model.fit(risso_prepared_data, 'Gg', batch_size = 100, epochs=10)
 
 
 
