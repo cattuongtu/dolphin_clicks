@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-
+from tensorflow.keras.utils import to_categorical
 
 # our libraries
 from lib.partition import split_by_day
@@ -45,13 +45,46 @@ def dolphin_classifier(data_directory):
 
 
     # Preparing data and training the model with the data
-    model = Sequential()
     risso_prepared_data = np.vstack(risso_train)
     pacific_prepared_data = np.vstack(pacific_train)
-    print(risso_prepared_data)
-    print(pacific_prepared_data)
+    # model = build_model()
+    # model.compile(optimizer = "Adam",loss = "categorical_crossentropy",metrics = ["accuracy"])
+    # model.summary()
 
+    examples = get_features(risso_prepared_data)
+    labels = get_labels(risso_prepared_data)
 
+    print(examples)
+
+    onehotlabels = to_categorical(labels, num_classes=2)
+    print(onehotlabels)
+
+    # model.fit(examples, labels, batch_size=100, epochs=10)
+
+    # results = model.evaluate()
+
+    # print(risso_prepared_data[0][1].features)
+    # print(np.shape(pacific_prepared_data))
+
+def get_features(data):
+    features = []
+
+    for days in data:
+        features.append(days[1].features)
+
+    return features
+
+def get_labels(data):
+    labels = []
+
+    for days in data:
+        if (days[1].label == 'Gg'):
+            labels.append(0)
+
+        else:
+            labels.append(1)
+
+    return labels
 
 if __name__ == "__main__":
     data_directory = "path\to\data"  # root directory of data
