@@ -1,13 +1,15 @@
 # Might make your life easier for appending to lists
 from collections import defaultdict
+from lib.buildmodels import build_model
 
 # Third party libraries
 import numpy as np
 # Only needed if you plot your confusion matrix
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
+# from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.layers import Dense
 
 # our libraries
 from lib.partition import split_by_day
@@ -45,23 +47,39 @@ def dolphin_classifier(data_directory):
 
 
     # Preparing data and training the model with the data
-    risso_prepared_data = np.vstack(risso_train)
-    pacific_prepared_data = np.vstack(pacific_train)
-    # model = build_model()
-    # model.compile(optimizer = "Adam",loss = "categorical_crossentropy",metrics = ["accuracy"])
-    # model.summary()
 
-    examples = get_features(risso_prepared_data)
-    labels = get_labels(risso_prepared_data)
+    # risso_prepared_data = np.vstack(risso_train)
+    # print(len(risso_prepared_data))
+    # pacific_prepared_data = np.vstack(pacific_train)
+    # print(len(pacific_prepared_data))
 
-    print(examples)
+    all_train_data = np.concatenate((np.vstack(risso_train), np.vstack(pacific_train)), axis=0)
+    all_test_data = np.concatenate((np.vstack(risso_test), np.vstack(pacific_test)), axis=0)
 
-    onehotlabels = to_categorical(labels, num_classes=2)
-    print(onehotlabels)
+    model = build_model([(Dense, [10], {'activation':'relu', 'input_dim': 20}),
+     (Dense, [10], {'activation':'relu', 'input_dim':10}),
+     (Dense, [2], {'activation':'softmax', 'input_dim':10})
+    ])
+    model.compile(optimizer = "Adam",loss = "categorical_crossentropy",metrics = ["accuracy"])
+    model.summary()
 
-    # model.fit(examples, labels, batch_size=100, epochs=10)
+    examples = get_features(all_train_data)
+    labels = to_categorical(get_labels(all_train_data),num_classes=2)
 
-    # results = model.evaluate()
+    # for i in range(len(examples)):
+    #     print(f"Examples {i}: {len(examples[i])}")
+    # print(labels)
+
+    test_examples = get_features(all_test_data)
+    test_labels = to_categorical(get_labels(all_test_data),num_classes=2)
+
+    # print(examples)
+    # print(onehotlabels)
+
+    model.fit(examples, labels, batch_size=100, epochs=10)
+
+    # results = model.evaluate(test_examples, test_labels)
+    # print(results[1])
 
     # print(risso_prepared_data[0][1].features)
     # print(np.shape(pacific_prepared_data))

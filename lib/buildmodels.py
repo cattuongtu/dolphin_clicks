@@ -6,6 +6,7 @@ Created on Dec 2, 2017
 
 from tensorflow.keras.models import Sequential
 import tensorflow.keras.backend as K
+from tensorflow.keras.layers import Dense
 
 def build_model(specification, name="model"):
     """build_model - specification list
